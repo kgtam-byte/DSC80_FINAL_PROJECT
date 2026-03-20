@@ -9,6 +9,7 @@ This project uses the **Major Power Outage Risks in the U.S.** dataset compiled 
 
 For this project I am using ‘Major Power Outage Risks in the U.S.’ dataset by the Laboratory for Advancing Sustainable Critical Infrastructure at Purdue University. This dataset highlights the major power outage events that affected at least 50,000 customers or caused an unplanned loss of 300+ megawatts between January 2000 and July 2016. 
 This dataset contains information from the outages themselves, like where and when the outage occurred, how long it lasted, to regional characteristics like climate pattern, land use, electricity consumption and more that may contribute to an outage risk. 
+
 This project is going to be centered around the question: “What are the characteristics of major power outages with higher severity?” which I am going to explore what risk factors across location, time, climate, etc that are associated with outage events on the more severe side. And build a model that predicts the severity of a major power outage given the cause and climate.
 outage severity will be measured using OUTAGE.DURATION, since longer outages generally indicate greater disruption to infrastructure and consumers.
 
@@ -143,7 +144,7 @@ I analyzed the missingness of `DEMAND.LOSS.MW` against two columns:
 
 **Significance Level:** α = 0.05 — a standard threshold that balances the risk of false positives against false negatives. Given that this is an exploratory analysis rather than a high-stakes decision, 0.05 is appropriate.
 
-**Result:** The observed TVD was ~0.099. The permutation test yielded a p-value of **0.04**, which is less than our significance level. We reject the null hypothesis. The data are consistent with the claim that outage duration distributions differ across climate categories — suggesting that climate episode type may be associated with outage severity, though we cannot establish causation from this test alone.
+**Result:** The observed TVD was ~0.099. The permutation test yielded a p-value of **0.04**, which is less than our significance level. We reject the null hypothesis. The data are consistent with the claim that outage duration distributions differ across climate categories, suggesting that climate episode type may be associated with outage severity, though we cannot establish causation from this test alone.
 
 <iframe
   src="assets/hypothesis_tvd.html"
@@ -162,9 +163,9 @@ I analyzed the missingness of `DEMAND.LOSS.MW` against two columns:
 
 **Response Variable:** `OUTAGE.DURATION`, chosen because longer outages generally indicate more severe events and greater disruption to infrastructure and consumers.
 
-**Evaluation Metric:** Root Mean Squared Error (RMSE), because it measures prediction accuracy in minutes and penalizes large errors more heavily — important for a use case where severely underestimating a long outage has real consequences. RMSE is preferred over MAE here because large prediction errors (e.g., predicting a 1-hour outage when it lasts 5 days) are disproportionately costly.
+**Evaluation Metric:** Root Mean Squared Error (RMSE), because it measures prediction accuracy in minutes and penalizes large errors more heavily, its important for a use case where severely underestimating a long outage has real consequences. RMSE is preferred over MAE here because large prediction errors (e.g., predicting a 1-hour outage when it lasts 5 days) are disproportionately costly.
 
-**Time of Prediction Justification:** All features used (`CAUSE.CATEGORY`, `CLIMATE.REGION`, `CLIMATE.CATEGORY`, `SEASON`, `POPULATION`, `TOTAL.SALES`, `POPPCT_URBAN`) represent information that would be known at or before the onset of an outage — location, climate context, and cause classification are all available before the outage resolves.
+**Time of Prediction Justification:** All features used (`CAUSE.CATEGORY`, `CLIMATE.REGION`, `CLIMATE.CATEGORY`, `SEASON`, `POPULATION`, `TOTAL.SALES`, `POPPCT_URBAN`) represent information that would be known at or before the onset of an outage, location, climate context, and cause classification are all available before the outage resolves.
 
 ---
 
@@ -180,19 +181,19 @@ I analyzed the missingness of `DEMAND.LOSS.MW` against two columns:
 - Training RMSE: **4,754 minutes**
 - Test RMSE: **7,114 minutes**
 
-The baseline model is not particularly strong — a test RMSE of ~7,114 minutes (~4.9 days) is large relative to the dataset's median outage duration of roughly 1,500 minutes. This is expected given we are using only two features and a linear model, but it establishes a useful benchmark for improvement in the final model.
+The baseline model is not particularly strong, a test RMSE of ~7,114 minutes (~4.9 days) is large relative to the dataset's median outage duration of roughly 1,500 minutes. This is expected given we are using only two features and a linear model, but it establishes a useful benchmark for improvement in the final model.
 
 ---
 
 ## Final Model
 
-**Model:** Random Forest Regressor in a `sklearn` Pipeline, selected for its ability to capture non-linear interactions between features — important here because outage severity likely depends on complex combinations of location, climate, and cause that a linear model cannot capture.
+**Model:** Random Forest Regressor in a `sklearn` Pipeline, selected for its ability to capture non-linear interactions between features, its important here because outage severity likely depends on complex combinations of location, climate, and cause that a linear model cannot capture.
 
 **New Features Engineered:**
 - `LOG_POPULATION` — log-transform of state population. Population is right-skewed; log-transforming compresses extreme values and makes the relationship with outage duration more linear. Larger populated states likely have more complex grid infrastructure, making outages harder to resolve quickly.
 - `SEASON` — derived from `MONTH` by binning into Winter/Spring/Summer/Fall. Captures broad seasonal demand patterns more cleanly than raw month numbers, since both summer (heat waves) and winter (storms) are high-severity seasons.
 
-**Additional Features:** `CLIMATE.REGION`, `CLIMATE.CATEGORY`, `TOTAL.SALES`, `POPPCT_URBAN` — all providing richer context about the regional grid and climate environment that influences how long outages last.
+**Additional Features:** `CLIMATE.REGION`, `CLIMATE.CATEGORY`, `TOTAL.SALES`, `POPPCT_URBAN` , all providing richer context about the regional grid and climate environment that influences how long outages last.
 
 **Hyperparameter Tuning:** `GridSearchCV` with 5-fold cross-validation over `max_depth` in {5, 10, 20} and `n_estimators` in {100, 200}. Best parameters: `max_depth=5`, `n_estimators=100`.
 
@@ -212,12 +213,12 @@ The final model improved test RMSE by ~167 minutes over the baseline (~2.4% impr
 
 **Evaluation Metric:** RMSE — consistent with the regression metric used throughout.
 
-**Null Hypothesis:** The model is fair with respect to season. Its RMSE for Winter and Summer outages are roughly the same, and any observed difference is due to random chance.
+**Null Hypothesis:** Its RMSE for Winter and Summer outages are roughly the same, and any observed difference is due to random chance.
 
-**Alternative Hypothesis:** The model is unfair. Its RMSE for Winter outages differs from its RMSE for Summer outages.
+**Alternative Hypothesis:** Its RMSE for Winter outages differs from its RMSE for Summer outages.
 
 **Test Statistic:** Absolute difference in RMSE between the two groups.
 
 **Significance Level:** α = 0.05
 
-**Result:** Observed RMSE difference = 7,476 minutes (Winter: 12,626 min, Summer: 5,149 min). Permutation test p-value = **0.2952**. We fail to reject the null hypothesis — there is insufficient evidence that the model performs significantly differently for Winter vs. Summer outages. Any observed difference is consistent with random variation.
+**Result:** Observed RMSE difference = 7,476 minutes (Winter: 12,626 min, Summer: 5,149 min). Permutation test p-value = **0.2952**. We fail to reject the null hypothesis because there is insufficient evidence that the model performs significantly differently for Winter vs. Summer outages.
