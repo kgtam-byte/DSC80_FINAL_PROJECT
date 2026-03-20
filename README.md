@@ -7,13 +7,16 @@ by: Kaitlyn Tam
 
 This project uses the **Major Power Outage Risks in the U.S.** dataset compiled by the Laboratory for Advancing Sustainable Critical Infrastructure (LASCI) at Purdue University. The dataset documents major power outage events across the continental U.S. from January 2000 to July 2016 — specifically, outages that affected at least 50,000 customers or caused an unplanned energy loss of 300+ megawatts.
 
-Beyond the outage events themselves (when, where, how long), the dataset also includes regional characteristics such as climate patterns, land-use features, electricity consumption, and economic indicators that may contribute to outage risk.
+For this project I am using ‘Major Power Outage Risks in the U.S.’ dataset by the Laboratory for Advancing Sustainable Critical Infrastructure at Purdue University. This dataset highlights the major power outage events that affected at least 50,000 customers or caused an unplanned loss of 300+ megawatts between January 2000 and July 2016. 
+This dataset contains information from the outages themselves, like where and when the outage occurred, how long it lasted, to regional characteristics like climate pattern, land use, electricity consumption and more that may contribute to an outage risk. 
+This project is going to be centered around the question: “What are the characteristics of major power outages with higher severity?” which I am going to explore what risk factors across location, time, climate, etc that are associated with outage events on the more severe side. And build a model that predicts the severity of a major power outage given the cause and climate.
+outage severity will be measured using OUTAGE.DURATION, since longer outages generally indicate greater disruption to infrastructure and consumers.
 
 **Central Question:** *What are the characteristics of major power outages with higher severity?*
 
-Outage severity is measured using `OUTAGE.DURATION` (in minutes), since longer outages generally indicate greater disruption to infrastructure and consumers. Understanding which risk factors are associated with more severe outages could help energy companies prioritize preventive measures and predict where and when high-severity events are likely to occur.
+This is important because energy companies may not always be able to prevent all outages, but they can monitor the characteristics that lead to severe outages and identify when and where the high severity events are likely to occur and prioritize preventive measures accordingly. 
 
-The dataset contains **1,534 rows** and 57 columns. The most relevant columns for this project are:
+For this dataset, there are 1534 rows and 57 columns. However, for this project I will be focusing on variables that are related to characteristics of higher severity outages. (like outage severity, location, time, climate, electricity patterns, and land use) 
 
 | Column | Type | Description |
 |---|---|---|
