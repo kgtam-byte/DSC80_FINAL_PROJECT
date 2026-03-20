@@ -43,10 +43,10 @@ For this dataset, there are 1534 rows and 57 columns. However, for this project 
 The raw Excel file contained metadata rows at the top, so I skipped the first 5 rows using `header=5` and removed the first data row (which contained units, not values) using `.loc[1:]`. I then selected the 23 columns most relevant to analyzing outage severity.
 
 **Handling missing values:**
-- **Categorical columns** (`U.S._STATE`, `NERC.REGION`, `CLIMATE.REGION`, `CLIMATE.CATEGORY`, `CAUSE.CATEGORY`): Missing values were filled with `'Unknown'` so they could be treated as their own category in downstream analysis, rather than being silently dropped.
-- **Numeric columns** (e.g., `ANOMALY.LEVEL`, `TOTAL.SALES`, `POPULATION`, `POPPCT_URBAN`): Missing values were imputed with the **column median**. Outage-related variables tend to be right-skewed due to rare extreme events, so the median is more robust than the mean.
+- **Categorical columns** (`U.S._STATE`, `NERC.REGION`, `CLIMATE.REGION`, `CLIMATE.CATEGORY`, `CAUSE.CATEGORY`): Missing values were filled with `'Unknown'` so they could be treated as their own category.
+- **Numeric columns** (e.g., `ANOMALY.LEVEL`, `TOTAL.SALES`, `POPULATION`, `POPPCT_URBAN`): Missing values were imputed with the **column median**. Outage-related variables tend to be right-skewed due to rare extreme events.
 
-Note that `OUTAGE.DURATION`, `DEMAND.LOSS.MW`, and `CUSTOMERS.AFFECTED` were intentionally **not** imputed globally, since imputing the target variable before modeling would introduce bias. The `nan` values visible in `DEMAND.LOSS.MW` below reflect the non-trivial missingness in this column, which is explored further in the Assessment of Missingness section.
+`OUTAGE.DURATION`, `DEMAND.LOSS.MW`, and `CUSTOMERS.AFFECTED` were **not** imputed, since imputing the target variable before modeling would introduce bias. 
 
 **Cleaned DataFrame (first 5 rows):**
 
@@ -60,7 +60,7 @@ Note that `OUTAGE.DURATION`, `DEMAND.LOSS.MW`, and `CUSTOMERS.AFFECTED` were int
 
 ### Univariate Analysis
 
-The choropleth below shows median outage duration by state. States in the **Northeast and Upper Midwest** (e.g., Michigan, New York, West Virginia) tend to have the longest median durations, suggesting these regions face structurally harder-to-resolve outages — possibly due to aging infrastructure or more frequent severe weather events.
+The choropleth below shows median outage duration by state. States in the **Northeast and Upper Midwest** (e.g., Michigan, New York, West Virginia) tend to have the longest median durations, suggesting these regions face harder to resolve outages possibly due to aging infrastructure or more frequent severe weather events.
 
 <iframe
   src="assets/outage_duration_by_state.html"
@@ -69,7 +69,7 @@ The choropleth below shows median outage duration by state. States in the **Nort
   frameborder="0"
 ></iframe>
 
-The bar chart below shows the distribution of demand loss severity across all major outages. The vast majority fall in the **Very Small (0–100 MW)** and **Small (100–500 MW)** categories — truly catastrophic losses above 3,000 MW are rare but represent the most severe events in this dataset.
+The bar chart below shows the distribution of demand loss severity across all major outages. The  majority fall in the **Very Small (0–100 MW)** and **Small (100–500 MW)** categories truly catastrophic losses above 3,000 MW are rare but represent the most severe events in this dataset.
 
 <iframe
   src="assets/demand_loss_dist.html"
@@ -80,7 +80,7 @@ The bar chart below shows the distribution of demand loss severity across all ma
 
 ### Bivariate Analysis
 
-The box plot below compares demand loss (MW) across U.S. climate regions on a log scale. The **Southeast** and **West** show the highest median demand losses, while the **Northwest** shows notably lower losses — suggesting geography and regional grid infrastructure influence how severely outages affect peak demand.
+The box plot below compares demand loss (MW) across U.S. climate regions on a log scale. The **Southeast** and **West** show the highest median demand losses, while the **Northwest** shows notably lower losses, suggesting geography and regional grid infrastructure influence how severely outages affect peak demand.
 
 <iframe
   src="assets/demand_loss_by_region.html"
